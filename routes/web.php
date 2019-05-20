@@ -12,11 +12,6 @@
 */
 
 
-Route::get( '/categories' , function(){
-    return \App\User::all();
-} );
-
-
 Route::get('/', function () {
     return view('welcome');
 });
