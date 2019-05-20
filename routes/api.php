@@ -18,6 +18,8 @@ use Illuminate\Http\Request;
  */
 Route::get( 'authors' , 'Api\\UserController@index');
 Route::get( 'authors/{id}' , 'Api\\UserController@show' );
+Route::get( 'posts/author/{id}' , 'Api\UserController@posts' );
+Route::get( 'comments/author/{id}' , 'Api\UserController@comments' );
 
 // End User Related
 
