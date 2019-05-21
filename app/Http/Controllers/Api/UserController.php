@@ -11,6 +11,7 @@ use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -24,14 +25,22 @@ class UserController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return UserResource
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name'  => 'required',
+            'email' => 'required',
+            'password'  => 'required'
+        ]);
+        $user = new User();
+        $user->name = $request->get( 'name' );
+        $user->email = $request->get( 'email' );
+        $user->password = Hash::make( $request->get( 'password' ) );
+        $user->save();
+        return new UserResource( $user );
     }
 
     /**
