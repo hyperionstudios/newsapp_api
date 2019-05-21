@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -63,9 +64,18 @@ class UserController extends Controller
         if( $request->has('name') ){
             $user->name = $request->get( 'name' );
         }
-        if( $request->has( 'avatar' ) ){
-            $user->avatar = $request->get( 'avatar' );
+
+        if( $request->hasFile('avatar') ){
+            $featuredImage = $request->file( 'avatar' );
+            $filename = time().$featuredImage->getClientOriginalName();
+            Storage::disk('images')->putFileAs(
+                $filename,
+                $featuredImage,
+                $filename
+            );
+            $user->avatar = url('/') . '/images/' .$filename;
         }
+
         $user->save();
         return new UserResource( $user );
     }
