@@ -139,4 +139,32 @@ class PostController extends Controller
         $comments = $post->comments()->paginate( env( 'COMMENTS_PER_PAGE' ) );
         return new CommentsResource( $comments );
     }
+
+    /**
+     * @param Request $request
+     * @param $id
+     * @return PostResource
+     */
+    public function votes( Request $request , $id ){
+        $request->validate( [
+            'vote'  => 'required'
+        ] );
+        $post = Post::find( $id );
+        $voters = json_decode( $post->voters );
+        if( $voters == null ){
+            $voters = [];
+        }
+        if( ! in_array( $request->user()->id , $voters ) ){
+            if( $request->get( 'vote' ) == 'up' ){
+                $post->votes_up += 1;
+            }
+            if( $request->get( 'vote' ) == 'down' ){
+                $post->votes_down += 1;
+            }
+            array_push( $voters , $request->user()->id );
+            $post->voters = json_encode( $voters );
+            $post->save();
+        }
+        return new PostResource( $post );
+    }
 }

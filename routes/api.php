@@ -47,4 +47,6 @@ Route::middleware('auth:api')->group( function(){
 
     Route::post( 'comments/posts/{id}' , 'Api\CommentController@store' );
 
+    Route::post( 'votes/posts/{id}' , 'Api\PostController@votes' );
+
 } ) ;
