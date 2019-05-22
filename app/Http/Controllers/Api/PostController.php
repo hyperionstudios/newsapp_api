@@ -150,20 +150,30 @@ class PostController extends Controller
             'vote'  => 'required'
         ] );
         $post = Post::find( $id );
-        $voters = json_decode( $post->voters );
-        if( $voters == null ){
-            $voters = [];
-        }
-        if( ! in_array( $request->user()->id , $voters ) ){
-            if( $request->get( 'vote' ) == 'up' ){
+        if( $request->get( 'vote' ) == 'up' ){
+            $voters_up = json_decode( $post->voters_up );
+            if( $voters_up == null ){
+                $voters_up = [];
+            }
+            if( ! in_array( $request->user()->id , $voters_up ) ){
                 $post->votes_up += 1;
+                array_push( $voters_up , $request->user()->id );
+                $post->voters_up = json_encode( $voters_up );
+                $post->save();
             }
-            if( $request->get( 'vote' ) == 'down' ){
+        }
+
+        if( $request->get( 'vote' ) == 'down' ){
+            $voters_down = json_decode( $post->voters_down );
+            if( $voters_down == null ){
+                $voters_down = [];
+            }
+            if( ! in_array( $request->user()->id , $voters_down ) ){
                 $post->votes_down += 1;
+                array_push( $voters_down , $request->user()->id );
+                $post->voters_down = json_encode( $voters_down );
+                $post->save();
             }
-            array_push( $voters , $request->user()->id );
-            $post->voters = json_encode( $voters );
-            $post->save();
         }
         return new PostResource( $post );
     }
